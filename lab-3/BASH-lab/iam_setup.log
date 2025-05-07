@@ -1,0 +1,3 @@
+# IAM Setup Log - Thu May  8 12:55:00 AM CAT 2025
+[2025-05-08 00:55:00] Starting IAM setup script
+[2025-05-08 00:55:00] ERROR: Cleanup file '.iam_setup_created' not found

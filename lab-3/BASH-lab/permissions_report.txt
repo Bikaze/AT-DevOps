@@ -1,0 +1,165 @@
+Permission Checker Report - Wed May  7 23:00:20 UTC 2025
+=====================================
+[1m[32mPermission Checker Script[0m
+[32m=============================[0m
+Generating report... This may take a few moments.
+
+
+[1m[34mSYSTEM INFORMATION[0m
+[34m==================[0m
+
+[1mHostname:[0m        ip-172-31-19-222
+[1mKernel:[0m          6.8.0-1024-aws
+[1mOS:[0m              Ubuntu 24.04.2 LTS
+[1mLast Boot:[0m       2025-05-07 22:20
+
+[1m[34mUSER INFORMATION[0m
+[34m================[0m
+
+[1mTotal users:[0m 41
+
+[1m[36mUsers with UID 0 (root access):[0m
+  - [33mroot[0m
+
+[1m[36mUsers with login shell:[0m
+  - Bikaze (Shell: /bin/sh)
+  - asmith (Shell: /bin/sh)
+  - jdoe (Shell: /bin/sh)
+  - lgarcia (Shell: /bin/sh)
+  - mjones (Shell: /bin/sh)
+  - rjohnson (Shell: /bin/sh)
+  - root (Shell: /bin/bash)
+  - sync (Shell: /bin/sync)
+  - ubuntu (Shell: /bin/bash)
+
+[1m[36mRecently created users (last 30 days):[0m
+  - ubuntu (Created: 2025-05-07)
+  - jdoe (Created: 2025-05-07)
+  - asmith (Created: 2025-05-07)
+  - mjones (Created: 2025-05-07)
+  - rjohnson (Created: 2025-05-07)
+  - lgarcia (Created: 2025-05-07)
+  - Bikaze (Created: 2025-05-07)
+
+[1m[34mGROUP INFORMATION[0m
+[34m=================[0m
+
+[1mTotal groups:[0m 66
+
+[1m[36mSystem groups (GID < 1000):[0m
+  - root (GID: 0)
+  - daemon (GID: 1)
+  - bin (GID: 2)
+  - sys (GID: 3)
+  - adm (GID: 4)
+  - tty (GID: 5)
+  - disk (GID: 6)
+  - lp (GID: 7)
+  - mail (GID: 8)
+  - news (GID: 9)
+  [33m(showing first 10 of 60)[0m
+
+[1m[36mUser groups (GID >= 1000):[0m
+  - accounting (GID: 1003)
+  - design (GID: 1002)
+  - engineering (GID: 1001)
+  - marketing (GID: 1004)
+  - ubuntu (GID: 1000)
+
+[1m[34mIMPORTANT DIRECTORY PERMISSIONS[0m
+[34m===============================[0m
+
+[1m/home:[0m
+  Permissions: 755
+  Owner: root
+  Group: root
+
+[1m/etc:[0m
+  Permissions: 755
+  Owner: root
+  Group: root
+
+[1m/etc/sudoers.d:[0m
+  Permissions: 750
+  Owner: root
+  Group: root
+
+[1m/var/log:[0m
+  Permissions: 775
+  Owner: root
+  Group: syslog
+
+[1m/usr/bin:[0m
+  Permissions: 755
+  Owner: root
+  Group: root
+
+[1m/usr/sbin:[0m
+  Permissions: 755
+  Owner: root
+  Group: root
+
+[1m/bin:[0m
+  Permissions: 777
+  Owner: root
+  Group: root
+
+[1m/sbin:[0m
+  Permissions: 777
+  Owner: root
+  Group: root
+
+[1m/boot:[0m
+  Permissions: 755
+  Owner: root
+  Group: root
+
+[1m[36mUser home directories:[0m
+  /home/ubuntu (ubuntu): 750
+  /home/jdoe (jdoe): 700
+  /home/asmith (asmith): 700
+  /home/mjones (mjones): 700
+  /home/rjohnson (rjohnson): 700
+  /home/lgarcia (lgarcia): 700
+  /home/Bikaze (Bikaze): 700
+
+[1m[34mSSH CONFIGURATION[0m
+[34m=================[0m
+
+[1m[36mKey SSH settings:[0m
+  X11Forwarding: yes
+
+[1m[36mAuthorized keys:[0m
+  ubuntu: 1 keys
+
+[1m[36mNon-standard SSH configuration files:[0m
+
+[1m[34mSUDO CONFIGURATION[0m
+[34m==================[0m
+
+[1m[36m/etc/sudoers file:[0m
+  Permissions: 440
+  Owner: root
+
+[1m[36mUsers with sudo access:[0m
+  root	ALL=(ALL:ALL) ALL
+  @includedir /etc/sudoers.d
+
+[1m[36mGroups with sudo access:[0m
+  %admin ALL=(ALL) ALL
+  %sudo	ALL=(ALL:ALL) ALL
+
+[1m[36m/etc/sudoers.d directory:[0m
+  Permissions: 750
+  Owner: root
+
+[1m[36mFiles in /etc/sudoers.d:[0m
+  /etc/sudoers.d/90-cloud-init-users:
+    Permissions: 440
+    Owner: root
+  /etc/sudoers.d/README:
+    Permissions: 440
+    Owner: root
+
+[1m[32mReport completed![0m
+Full report saved to: [1mpermissions_report.txt[0m

@@ -1,0 +1,5 @@
+jdoe,John Doe,engineering,john.doe@example.com
+asmith,Alice Smith,engineering,alice.smith@example.com
+mjones,Mike Jones,design,mike.jones@example.com
+rjohnson,Robert Johnson,accounting,robert.johnson@example.com
+lgarcia,Lisa Garcia,marketing,lisa.garcia@example.com
