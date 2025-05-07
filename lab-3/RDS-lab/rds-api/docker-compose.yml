@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    restart: unless-stopped
     environment:
       - DB_HOST=db
       - DB_USER=root
@@ -16,8 +17,8 @@ services:
       - db
 
   db:
-    image: mysql:5.7
-    restart: always
+    image: mysql:8.0
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: mydatabase
