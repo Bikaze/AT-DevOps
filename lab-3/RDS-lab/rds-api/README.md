@@ -1,9 +1,17 @@
 # Node API Project
 
 ## Overview
+
 This project is a Node.js application that interacts with a MySQL database hosted on AWS RDS. It provides a RESTful API for managing customers, products, and orders, as well as generating reports based on complex queries.
 
+## Base URL
+
+The base URL for the API is:
+
+**`http://34.240.153.88/`**
+
 ## Project Structure
+
 ```
 node-api-project
 ├── src
@@ -37,12 +45,14 @@ node-api-project
 ## Setup Instructions
 
 1. **Clone the Repository**
+
    ```
    git clone <repository-url>
    cd node-api-project
    ```
 
 2. **Install Dependencies**
+
    ```
    npm install
    ```
@@ -54,6 +64,7 @@ node-api-project
    Execute the SQL scripts located in the `sql` directory to create tables and insert initial data into your MySQL database.
 
 5. **Run the Application**
+
    ```
    npm start
    ```
@@ -62,7 +73,9 @@ node-api-project
    The API will be available at `http://localhost:3000`. You can use tools like Postman or curl to interact with the endpoints.
 
 ## API Documentation
+
 - **Customers**
+
   - `GET /customers`: Retrieve all customers
   - `GET /customers/:id`: Retrieve a customer by ID
   - `POST /customers`: Create a new customer
@@ -70,6 +83,7 @@ node-api-project
   - `DELETE /customers/:id`: Delete a customer by ID
 
 - **Products**
+
   - `GET /products`: Retrieve all products
   - `GET /products/:id`: Retrieve a product by ID
   - `POST /products`: Create a new product
@@ -77,6 +91,7 @@ node-api-project
   - `DELETE /products/:id`: Delete a product by ID
 
 - **Orders**
+
   - `GET /orders`: Retrieve all orders
   - `GET /orders/:id`: Retrieve an order by ID
   - `POST /orders`: Create a new order
@@ -91,7 +106,9 @@ node-api-project
   - `GET /reports/frequent-buyers`: Get frequent buyers (More Than One Order)
 
 ## Docker Setup
+
 To run the application using Docker, use the following command:
+
 ```
 docker-compose up
 ```
@@ -99,4 +116,5 @@ docker-compose up
 This will build the Docker image and start the application along with the MySQL database.
 
 ## License
+
 This project is licensed under the MIT License.
