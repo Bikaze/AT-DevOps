@@ -4,7 +4,9 @@
   "description": "simple api for playing with rds databases in AWS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "setup-db": "node src/scripts/setupDb.js",
+    "dev": "npm run setup-db && npm start"
   },
   "author": "bikaze",
   "license": "ISC",
