@@ -1,7 +1,7 @@
 #!/bin/bash
 # file_sorter.sh - Organizes files in a directory based on their types
-# Author: John Doe (johndoe@example.com)
-# Last modified: 05/12/2025
+# Author: Clement MUGISHA
+# Last modified: 15th May 2025
 # Version: 1.2.3
 #
 # Usage: ./file_sorter.sh [directory]
@@ -224,6 +224,3 @@ else
     exit 1
 fi
 
-# TODO: Add an undo feature
-# TODO: Add an option to simulate without moving files
-# TODO: Add logging to file
