@@ -8,7 +8,7 @@ This project is a Node.js application that interacts with a MySQL database hoste
 
 The base URL for the API is:
 
-**`http://34.240.153.88/`**
+**`http://52.49.102.112/`**
 
 ## Project Structure
 

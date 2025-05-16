@@ -1,3 +1,6 @@
+-- First select the database
+USE mydatabase;
+
 -- Drop tables if they exist
 DROP TABLE IF EXISTS order_items;
 DROP TABLE IF EXISTS orders;
