@@ -194,7 +194,7 @@ send_email_notification() {
         "Messages":[
           {
             "From": {
-              "Email": "admin.email@example.com", # Replace with your email
+              "Email": "clement.mugisha@amalitechtraining.org",
               "Name": "System Administrator"
             },
             "To": [

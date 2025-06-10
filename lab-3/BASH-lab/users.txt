@@ -3,3 +3,5 @@ asmith,Alice Smith,engineering,alice.smith@example.com
 mjones,Mike Jones,design,mike.jones@example.com
 rjohnson,Robert Johnson,accounting,robert.johnson@example.com
 lgarcia,Lisa Garcia,marketing,lisa.garcia@example.com
+jd,Jean De Dieu MUHIRWA,engineering,itsjd232@gmail.com
+bikaze,Clement MUGISHA,engineering,clement@bikaze.me

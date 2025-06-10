@@ -1,3 +1,15 @@
-# IAM Setup Log - Thu May  8 12:55:00 AM CAT 2025
-[2025-05-08 00:55:00] Starting IAM setup script
-[2025-05-08 00:55:00] ERROR: Cleanup file '.iam_setup_created' not found
+# IAM Setup Log - Thu May  8 10:45:15 PM CAT 2025
+[2025-05-08 22:45:15] Starting IAM setup script
+[2025-05-08 22:45:15] Starting cleanup...
+[2025-05-08 22:45:15] Removed user 'jdoe'
+[2025-05-08 22:45:15] Removed user 'asmith'
+[2025-05-08 22:45:15] Removed user 'mjones'
+[2025-05-08 22:45:15] Removed user 'rjohnson'
+[2025-05-08 22:45:15] Removed user 'lgarcia'
+[2025-05-08 22:45:15] Removed user 'jd'
+[2025-05-08 22:45:16] Removed user 'bikaze'
+[2025-05-08 22:45:16] Removed group 'engineering'
+[2025-05-08 22:45:16] Removed group 'design'
+[2025-05-08 22:45:16] Removed group 'accounting'
+[2025-05-08 22:45:16] Removed group 'marketing'
+[2025-05-08 22:45:16] Cleanup complete: removed 7 users and 4 groups
