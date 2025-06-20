@@ -11,6 +11,10 @@ This project is a modern, serverless photo sharing application built using AWS c
 - **Amazon API Gateway** for secure API endpoints
 - **AWS IAM** for secure service permissions
 
+👉 [View Project Guide PDF](https://drive.google.com/file/d/1kArnSENZK9V2oFj01q8QF2zd3txkeY4n/view?usp=sharing)
+
+👉 [Visit Live Demo](http://static-image-gallery-devops.s3-website-eu-west-1.amazonaws.com/) 😊
+
 ## System Architecture
 
 The diagram above illustrates the flow of data through the application:
@@ -19,9 +23,9 @@ The diagram above illustrates the flow of data through the application:
 2. API Gateway forwards the image to the original images S3 bucket
 3. S3 bucket triggers a Lambda function when a new image is uploaded
 4. Lambda function:
-   - Downloads the original image
-   - Resizes it to create a thumbnail (150x150 pixels)
-   - Uploads the thumbnail to the thumbnails S3 bucket
+    - Downloads the original image
+    - Resizes it to create a thumbnail (150x150 pixels)
+    - Uploads the thumbnail to the thumbnails S3 bucket
 5. User views thumbnails in the gallery, which are served through API Gateway
 
 ## Implementation Details
