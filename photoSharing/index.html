@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Photo Sharing App</title>
+  </head>
+  <body>
+    <h1>Upload an Image</h1>
+    <input type="file" id="uploadFile" />
+    <button id="uploadBtn" onclick="uploadImage()">Upload</button>
+    <p id="statusMsg" style="font-weight: bold; color: green"></p>
+
+    <h2>Gallery</h2>
+    <div id="gallery" style="display: flex; flex-wrap: wrap; gap: 15px"></div>
+
+    <script>
+      const BASE_URL =
+        "https://xcp9md2xth.execute-api.eu-west-1.amazonaws.com/prod/images/";
+
+      async function uploadImage() {
+        const fileInput = document.getElementById("uploadFile");
+        const file = fileInput.files[0];
+        const statusMsg = document.getElementById("statusMsg");
+        const uploadBtn = document.getElementById("uploadBtn");
+
+        if (!file) return alert("Please select a file.");
+
+        // Disable button and show uploading message
+        uploadBtn.disabled = true;
+        statusMsg.textContent = "Uploading... Please wait.";
+
+        const sanitizedName = file.name.replace(/\s+/g, "-");
+        const fileName = encodeURIComponent(sanitizedName);
+        const uploadUrl = `${BASE_URL}${fileName}`;
+
+        try {
+          const response = await fetch(uploadUrl, {
+            method: "PUT",
+            body: file,
+          });
+          if (response.ok) {
+            statusMsg.textContent = "Upload successful! Refreshing gallery...";
+            // S3 can be eventually consistent, so we need to retry a few times
+            let retryCount = 0;
+            const maxRetries = 3; // Track the filename we just uploaded to specifically check for it
+            const justUploadedFileName = fileName;
+
+            const refreshGallery = () => {
+              // Progressive backoff timing for retries (2s, 4s, 6s)
+              const waitTime = 2000 + retryCount * 2000;
+              statusMsg.textContent = `Refreshing gallery in ${
+                waitTime / 1000
+              } seconds...`;
+
+              setTimeout(async () => {
+                try {
+                  // Ensure we actually update the gallery with the XML response
+                  await displayImages(justUploadedFileName);
+
+                  // Reset the file input so user can select new files
+                  document.getElementById("uploadFile").value = "";
+
+                  statusMsg.textContent = "Upload successful! Gallery updated.";
+                  uploadBtn.disabled = false;
+                } catch (error) {
+                  console.error("Gallery refresh error:", error);
+                  retryCount++;
+                  if (retryCount < maxRetries) {
+                    statusMsg.textContent = `Refreshing gallery... (attempt ${
+                      retryCount + 1
+                    }/${maxRetries})`;
+                    refreshGallery();
+                  } else {
+                    statusMsg.textContent =
+                      "Upload successful but gallery refresh failed. Please refresh the page.";
+                    uploadBtn.disabled = false;
+                  }
+                }
+              }, 1500);
+            };
+
+            refreshGallery();
+          } else {
+            statusMsg.textContent = "Upload failed. Try again.";
+            uploadBtn.disabled = false;
+          }
+        } catch (error) {
+          console.error("Upload error:", error);
+          statusMsg.textContent = "Upload error. Check console.";
+          uploadBtn.disabled = false;
+        }
+      }
+      async function forceRefreshImages() {
+        // This function will always get fresh data from the server
+        // Using aggressive cache busting with a unique timestamp
+        const timestamp = new Date().getTime();
+        const random = Math.floor(Math.random() * 1000000);
+        const cacheBusterUrl = `${BASE_URL}?nocache=${timestamp}&r=${random}`;
+
+        // No custom headers to avoid CORS issues
+        const res = await fetch(cacheBusterUrl, {
+          mode: "cors",
+          cache: "no-store", // Tell browser not to use any cache
+        });
+        if (!res.ok) throw new Error(`Failed to fetch images: ${res.status}`);
+        return await res.text();
+      }
+      async function displayImages(checkForNewFile = null) {
+        const gallery = document.getElementById("gallery");
+        gallery.innerHTML = "<p>Loading images...</p>";
+
+        try {
+          const xmlText = await forceRefreshImages();
+
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+
+          // Check if the XML contains an error response
+          const errorNode = xmlDoc.querySelector("Error");
+          if (errorNode) {
+            const code = xmlDoc.querySelector("Code")?.textContent || "Unknown";
+            const message =
+              xmlDoc.querySelector("Message")?.textContent || "Unknown error";
+            throw new Error(`S3 error: ${code} - ${message}`);
+          }
+          const nsResolver = (prefix) => {
+            const ns = { s3: "http://s3.amazonaws.com/doc/2006-03-01/" };
+            return ns[prefix] || null;
+          };
+
+          const contents = xmlDoc.evaluate(
+            "//s3:Contents",
+            xmlDoc,
+            nsResolver,
+            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+            null
+          );
+
+          // Clear the gallery before adding new images
+          gallery.innerHTML = "";
+          if (contents.snapshotLength === 0) {
+            gallery.innerHTML = "<p>No images found in the gallery.</p>";
+            return;
+          }
+
+          // Check if our newly uploaded file is in the results
+          let foundNewUpload = !checkForNewFile; // True if we're not specifically looking
+
+          for (let i = 0; i < contents.snapshotLength; i++) {
+            const item = contents.snapshotItem(i);
+            const key = item.getElementsByTagNameNS(
+              "http://s3.amazonaws.com/doc/2006-03-01/",
+              "Key"
+            )[0].textContent;
+
+            // Check if this is our new file
+            if (
+              checkForNewFile &&
+              key === decodeURIComponent(checkForNewFile)
+            ) {
+              foundNewUpload = true;
+            }
+
+            const img = document.createElement("img");
+            img.src = `${BASE_URL}${encodeURIComponent(key)}`;
+            img.width = 150;
+            img.height = 150;
+            img.style.border = "1px solid #ccc";
+            img.style.borderRadius = "4px";
+            img.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+
+            gallery.appendChild(img);
+          }
+
+          // If we were looking for a specific new file and didn't find it, throw an error
+          if (checkForNewFile && !foundNewUpload) {
+            throw new Error(
+              "Newly uploaded file not found in gallery. S3 may still be processing."
+            );
+          }
+        } catch (error) {
+          console.error("Failed to load images:", error);
+          gallery.innerHTML =
+            "<p>Error loading gallery. <button onclick='retryLoadImages()'>Retry</button></p>";
+        }
+      } // Load images when page loads
+      displayImages().catch((error) => {
+        console.error("Initial gallery load failed:", error);
+        document.getElementById("gallery").innerHTML =
+          "<p>Failed to load images. <button onclick='retryLoadImages()'>Retry</button></p>";
+      });
+
+      // Function to retry loading images if initial load fails
+      function retryLoadImages() {
+        document.getElementById("gallery").innerHTML =
+          "<p>Loading images...</p>";
+        displayImages().catch((error) => {
+          console.error("Retry gallery load failed:", error);
+          document.getElementById("gallery").innerHTML =
+            "<p>Failed to load images. <button onclick='retryLoadImages()'>Retry</button></p>";
+        });
+      }
+    </script>
+  </body>
+</html>
