@@ -1,0 +1,75 @@
+#!/bin/bash
+# Simple User Data script for LAMP application
+set -e
+
+echo "Starting LAMP stack setup at $(date)" > /var/log/lamp-setup.log
+
+# Update system
+apt-get update >> /var/log/lamp-setup.log 2>&1
+apt-get install -y curl netcat-openbsd >> /var/log/lamp-setup.log 2>&1
+
+# Install Docker using official script
+echo "Installing Docker..." >> /var/log/lamp-setup.log
+curl -fsSL https://get.docker.com -o get-docker.sh >> /var/log/lamp-setup.log 2>&1
+sh get-docker.sh >> /var/log/lamp-setup.log 2>&1
+
+# Start Docker
+systemctl start docker >> /var/log/lamp-setup.log 2>&1
+systemctl enable docker >> /var/log/lamp-setup.log 2>&1
+
+# Add ubuntu user to docker group
+usermod -aG docker ubuntu >> /var/log/lamp-setup.log 2>&1
+
+# Wait for Docker to be ready
+echo "Waiting for Docker service to be ready..." >> /var/log/lamp-setup.log
+for i in {1..15}; do
+    if systemctl is-active --quiet docker; then
+        echo "Docker is active after $i seconds" >> /var/log/lamp-setup.log
+        break
+    fi
+    echo "Waiting for Docker to be ready... ($i/15)" >> /var/log/lamp-setup.log
+    sleep 1
+done
+
+# Wait for database to be ready
+echo "Checking database connectivity to ${db_host}..." >> /var/log/lamp-setup.log
+for i in {1..20}; do
+    if nc -zv ${db_host} 3306 >> /var/log/lamp-setup.log 2>&1; then
+        echo "Database is ready" >> /var/log/lamp-setup.log
+        break
+    fi
+    echo "Waiting for database... ($i/20)" >> /var/log/lamp-setup.log
+    sleep 5
+done
+
+# Even if database isn't ready, continue with deployment
+echo "Starting LAMP application..." >> /var/log/lamp-setup.log
+
+# Pull and run the container
+docker pull bikaze/lamp >> /var/log/lamp-setup.log 2>&1
+
+# Run the LAMP container with environment variables
+docker run -d \
+  --name lamp-app \
+  -p 80:80 \
+  -e DB_HOST="${db_host}" \
+  -e DB_NAME="${db_name}" \
+  -e DB_USER="${db_user}" \
+  -e DB_PASSWORD="${db_password}" \
+  -e APP_NAME="${app_name}" \
+  -e PROJECT_ENV="${environment}" \
+  --restart unless-stopped \
+  bikaze/lamp >> /var/log/lamp-setup.log 2>&1
+
+# Wait for application to start
+echo "Waiting for application to start..." >> /var/log/lamp-setup.log
+for i in {1..20}; do
+    if curl -fs http://localhost:80/ > /dev/null; then
+        echo "Application is responding" >> /var/log/lamp-setup.log
+        break
+    fi
+    echo "Waiting for application... ($i/20)" >> /var/log/lamp-setup.log
+    sleep 3
+done
+
+echo "Application startup complete at $(date)" >> /var/log/lamp-setup.log
