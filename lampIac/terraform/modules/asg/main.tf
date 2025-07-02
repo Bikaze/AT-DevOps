@@ -57,15 +57,15 @@ resource "aws_autoscaling_group" "app" {
   vpc_zone_identifier       = var.subnet_ids
   target_group_arns         = [var.target_group_arn]
   health_check_type         = "ELB" # Use ALB health checks for instance health
-  health_check_grace_period = 300   # Standard 300 seconds (5 minutes) to allow proper initialization
+  health_check_grace_period = 120   # Increased to 120 seconds to allow Docker container to start properly
   termination_policies      = ["OldestInstance", "Default"]
-  wait_for_capacity_timeout = "10m" # Standard 10 minutes to allow for proper instance provisioning
+  wait_for_capacity_timeout = "5m"  # Increased to 5 minutes to allow for instance provisioning
 
-  min_size         = 1 # Temporarily set to 1 to ensure we have at least one working instance
+  min_size         = var.min_size
   max_size         = var.max_size
-  desired_capacity = 1 # Temporarily set to 1 while we resolve the health check issues
+  desired_capacity = var.desired_capacity # Using variable from terraform.tfvars (set to 2)
 
-  default_cooldown = 300 # Standard 300 seconds (5 minutes) cooldown period
+  default_cooldown = 20             # Reduced to 20 seconds for very quick scaling
 
   launch_template {
     id      = aws_launch_template.app.id
@@ -86,9 +86,9 @@ resource "aws_autoscaling_group" "app" {
     strategy = "Rolling"
     preferences {
       min_healthy_percentage = 50
-      instance_warmup        = 30        # Reduced to 30 seconds for much faster instance provisioning
-      checkpoint_delay       = 10        # Adds a 10-second delay between instance replacements
-      checkpoint_percentages = [50, 100] # Check at 50% and 100% completion
+      instance_warmup        = 30  # Reduced to 30 seconds for much faster instance provisioning
+      checkpoint_delay       = 10  # Adds a 10-second delay between instance replacements
+      checkpoint_percentages = [50, 100]  # Check at 50% and 100% completion
     }
   }
 
@@ -116,7 +116,7 @@ resource "aws_autoscaling_lifecycle_hook" "init" {
   name                   = "${var.project_name}-init-hook"
   autoscaling_group_name = aws_autoscaling_group.app.name
   lifecycle_transition   = "autoscaling:EC2_INSTANCE_LAUNCHING"
-  heartbeat_timeout      = 300 # Standard 300 seconds (5 minutes) timeout
+  heartbeat_timeout      = 30   # Minimum allowed value by AWS
   default_result         = "CONTINUE"
 }
 
@@ -125,7 +125,7 @@ resource "aws_autoscaling_lifecycle_hook" "terminate" {
   name                   = "${var.project_name}-terminate-hook"
   autoscaling_group_name = aws_autoscaling_group.app.name
   lifecycle_transition   = "autoscaling:EC2_INSTANCE_TERMINATING"
-  heartbeat_timeout      = 300 # Standard 300 seconds (5 minutes) timeout
+  heartbeat_timeout      = 30   # Minimum allowed value by AWS
   default_result         = "CONTINUE"
 }
 

@@ -29,18 +29,18 @@ resource "aws_lb_target_group" "app" {
 
   health_check {
     enabled             = true
-    healthy_threshold   = 3   # Standard: require 3 consecutive successful checks to mark as healthy
-    unhealthy_threshold = 3   # Standard: require 3 consecutive failed checks to mark as unhealthy
-    timeout             = 5   # Standard 5 second timeout for health checks
-    interval            = 30  # Standard 30 second interval between health checks
-    path                = "/" # Default root path served by Apache in the bikaze/lamp container
+    healthy_threshold   = 2      # Minimum number of consecutive successful checks to consider unhealthy->healthy
+    unhealthy_threshold = 2      # Minimum number of consecutive failed checks to consider healthy->unhealthy
+    timeout             = 2      # Reduced from 3 to 2 seconds
+    interval            = 5      # Reduced from 10 to 5 seconds for faster health checks
+    path                = "/"    # Default root path served by Apache in the bikaze/lamp container
     matcher             = "200-299"
     port                = "traffic-port"
     protocol            = "HTTP"
   }
 
   # Configure target group attributes
-  deregistration_delay = 300 # Standard 300 seconds (5 minutes) for connection draining
+  deregistration_delay = 10  # Reduced from 30 to 10 seconds for faster instance deregistration
 
   stickiness {
     type            = "lb_cookie"
